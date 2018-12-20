@@ -33,3 +33,4 @@ In this lab, you will program Amazon FreeRTOS to change the on-board LED state b
 [![Lab4](images/lab4.png)](./Lab4.md "Lab 4")
 
 
+Copyright (C) 2018 Amazon.com, Inc. and Infineon Technologies AG.  All Rights Reserved.
