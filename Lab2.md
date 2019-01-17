@@ -1,8 +1,8 @@
 # Amazon FreeRTOS Workshop for the Infineon XMC4800 IoT Connectivity Kit
+
 ## Lab 2: Run the Amazon FreeRTOS Sample Code
 
 In this lab, you will download the Amazon FreeRTOS sample code from Github, import the sample code into Infineon DAVE4 that you downloaded from section 1, configure the Amazon FreeRTOS sample with your WiFi settings and the certificates from section 2, and download to the Infineon XMC4800 IoT Connectivity Kit using the on-board debugger.
-
 
 ### Open and Build the Amazon FreeRTOS Sample Project
 
@@ -309,11 +309,11 @@ Out of the box, the LEDs are disabled because GPIOs connected to them act as inp
     GPIOCC32XX_GPIO_11 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
    ```
    
-4. In CCS8, open ```application_code``` > ```main.c```.  Scroll to line 126.  Note the API call ```GPIO_Init()```.  This API call is not part of Amazon FreeRTOS; rather, it is part of the TI SDK.  Since it is already being initialized by the scheduler startup hook, we do not need to add it again.
+4. In DAVE, open ```application_code``` > ```main.c```.  Scroll to line 126.  Note the API call ```GPIO_Init()```.  This API call is not part of Amazon FreeRTOS; rather, it is part of the TI SDK.  Since it is already being initialized by the scheduler startup hook, we do not need to add it again.
 
 Next, we will add GPIO code to perform a tick-tock action between the two GPIOs.
 
-1. In CCS8, open ```application_code``` > ```common_demos``` > ```source``` > ```aws_hello_world.c```.
+1. In DAVE, open ```application_code``` > ```common_demos``` > ```source``` > ```aws_hello_world.c```.
 2. Scroll to approximately line 510, to function ```void vStartMQTTEchoDemo( void )```.
 
    ```c
@@ -342,6 +342,6 @@ Next, we will add GPIO code to perform a tick-tock action between the two GPIOs.
                GPIO_write(Board_GPIO_LED2, Board_GPIO_LED_ON);
            }
    ```
-5. Run the CCS project again.  You will notice the led alternating on what is marked D8 and D9 on the development board.
+5. Run the DAVE project again.  You will notice the led alternating on what is marked D8 and D9 on the development board.
 
 [Next Lab](./Lab3.md)
