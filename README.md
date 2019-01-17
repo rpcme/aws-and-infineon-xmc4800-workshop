@@ -21,7 +21,7 @@ In this lab, you will download the Amazon FreeRTOS sample code from AWS IoT, imp
 
 ### Lab 3: Using AWS IoT Core
 
-In this lab, you will program Amazon FreeRTOS to get the die temperature sensor readings from the MCU and send to AWS IoT Core.
+In this lab, you will program Amazon FreeRTOS to poll the die temperature sensor reading from the MCU and send to AWS IoT Core.
 
 [![Lab3](images/lab3.png)](./Lab3.md "Lab 3")
 
