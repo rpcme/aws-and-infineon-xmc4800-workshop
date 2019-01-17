@@ -39,22 +39,6 @@ Windows: for install directory, leave default ```C:\ti```
 
 For **Processor Support**, choose **SimpleLink(tm) Wi-Fi(R) CC32xx Wireless MCUs**.
 
-#### Texas Instruments Uniflash
-
-Texas Instruments Uniflash 4.4.0 is required to complete the labs.
-
-> USB Stick
-> > 1. Insert the USB Memory Stick to your laptop.  If you are taking this lab outside from a sponsored AWS event, download the software from Texas Instruments.
-> > 2. Locate the directory for your target platform. If you are running Windows, enter the ```windows``` directory.  If you are running MacOSX, enter the macosx directory.
-> > Double-click the installer.
->
-> Download
-> > **NOTE** if you are at an AWS sponsored event and received the USB key, please do not download the payload from the internet.
-> > 
-> > 1. Navigate to the [TI Uniflash Page](http://www.ti.com/tool/UNIFLASH).
-> > 2. Download the ***offline installer*** installer for your target platform.
-> > 3. Double-click the downloaded installer.
-
 #### Python
 
 Python is required for running AWS IoT test scripts and using the AWS CLI.
@@ -121,7 +105,7 @@ On Windows, install Git for Windows](https://gitforwindows.org/), which includes
 
 ### Initializing the Repository
 
-In this section, you will learn the physical directory layout for Amazon FreeRTOS.  You will clone the git repository that include the Code Composer Studio projects and a reference to Amazon FreeRTOS as a git repository submodule.
+In this section, you will learn the physical directory layout for Amazon FreeRTOS.  You will clone the git repository that include the Infineon DAVE projects and a reference to Amazon FreeRTOS as a git repository submodule.
 
 From your Home directory, check out the sources.
 
@@ -158,48 +142,9 @@ There are a few ways of identifying a unique ID on a microcontroller based on wh
 
 The MAC address composition that may be familiar to you has the format XX:XX:XX:XX:XX:XX.  However, we cannot use that format when creating AWS IoT things since the colon is not a supported character.
 
-Another challenge is how to retrieve the MAC address when it's printed neither on the MCU nor the development board.  In this case, we can use Texas Instruments Uniflash.
+Another challenge is how to retrieve the MAC address when it's printed neither on the MCU nor the development board.  
 
-1. Open the Uniflash utility.  For Mac OSX, it is located under ```Applications``` > ```ti``` > ```uniflash_4.4.0``` > ```UniFlash 4.4.0```.  For Windows, it is located under ```Start``` > ```Texas Instruments``` > ```UniFlash```.
-
-2. Move the SOP jumper to position 2.
-
-   <img src="images/Lab1/full_board_SOP.png" alt="drawing" style="width:600px;"/>
-
-3. Attach the CC3220SF board to your computer.
-
-   ![Cable]((images/Lab1/
-4. Click the Start button.
-
-   <img src="images/Lab1/uniflash_after_cable_connect.png" alt="drawing" style="width:600px;"/>
-
-   If the connected device does not automatically appear here, then click on the 'Start Now' button.
-   
-   <img src="images/Lab1/uniflash_start_now.png" alt="drawing" style="width:600px;"/>
-
-5. Click New Project.
-
-   <img src="images/Lab1/uniflash_choose_project.png" alt="drawing" style="width:600px;"/>
-
-6. Enter information as shown.  Explanation for each input item is listed below the image. 
-
-   ![New](images/Lab1/uniflash_project_detail.png)
-   1. Enter the Project Name IotDayWorkshop.
-   2. Select CC3220SF.
-   3. Select Development Mode
-   4. Click Create Project.
-
-7. Click the Connect button.
-   
-   ![Start](images/Lab1/uniflash_uart_preconnect.png)
-8. After connecting, you will be able to view device information.  Write down the MAC address for use in the next section.
-
-   ![Start](images/Lab1/uniflash_uart_postconnect.png)
-9. If you see the following dialog box, ensure the SOP jumper is in the correct position (position 2).
-
-   ![Start](images/Lab1/uniflash_wrong_sop.png)
-
-**NOTE**: This project will be reused in Lab 5.  Do not delete the project.
+**WRITE INSTRUCTION ON GETTING THE MAC ADDRESS HERE**
 
 #### Create the Thing Object
 
