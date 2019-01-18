@@ -2,38 +2,13 @@
 
 ## Lab 2: Run the Amazon FreeRTOS Sample Code
 
-In this lab, you will download the Amazon FreeRTOS sample code from Github, import the sample code into Infineon DAVE4 that you downloaded from section 1, configure the Amazon FreeRTOS sample with your WiFi settings and the certificates from section 2, and download to the Infineon XMC4800 IoT Connectivity Kit using the on-board debugger.
+In this lab, you will configure the Amazon FreeRTOS sample with your WiFi settings and the certificates and run the Hellow World Demo on the Infineon XMC4800 IoT Connectivity Kit.
 
-### Open and Build the Amazon FreeRTOS Sample Project
-
-In this section, open the Amazon FreeRTOS Sample Project that serves as the baseline for the labs.
-
-1. Open DAVE4.  When you first open DAVE4, the IDE will prompt your for a workspace location. Choose the default location and check the box "don't ask again".
-2. Import the project.
-   1. Open the import dialog by clicking **File > Import...**.
-   2. Expand **Infineon**, select **DAVE Project**, and click **Next**.
-   
-    <img src="images/Lab2/dave4_project_import_action_selection.png" alt="drawing" style="width:600px;"/>
-
-   3. For 	**Select search-directory**, choose **Browse...**
-   4. Locate the directory ```LAB_REPOPATH```, and then navigate to ```LAB_REPOPATH/demos/infineon/xmc4800_iotkit/dave4```.  Click Open.
-   5. Ensure that **aws_demos** is checked in the **Discovered projects**.
-   6. Ensure that the **Copy projects into workspace** checkbox is NOT checked.
-   
-      <img src="images/Lab2/dave4_project_import_dialog.png" alt="drawing" style="width:600px;"/>
-      
-   7. Click **Finish**.
-3. Run a full compile by clicking **Project > Build Active Project** or the Build Active Project button in the menu bar.
-   
-   <img src="images/Lab2/dave4_menubar_compile.png" alt="drawing" style="width:600px;"/>
-
-At this point, the project builds but it is not configured properly for connectivity.  In the next section, we will configure the project to run the Hello World demo.
-
-### Configuring for the Hello World Demo
+### Configuring the Hello World Demo
 
 In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include``` > ```aws_clientcredential.h```.
 
-2. Edit the ```clientcredentialMQTT_BROKER_ENDPOINT``` variable on line 38.  To retrieve the value for this variable, issue the following command using the AWS CLI.
+1. Edit the ```clientcredentialMQTT_BROKER_ENDPOINT``` variable on line 38.  To retrieve the value for this variable, issue the following command using the AWS CLI.
 
    ```bash
    aws iot describe-endpoint
@@ -51,31 +26,34 @@ In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include
    static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "audqth7zumq6e.iot.us-east-1.amazonaws.com";
    ```
    
-3. Edit the ```clientcredentialIOT_THING_NAME``` variable on line 43.  Although this value is used for the Device Shadow Client, we will edit it for completeness.  In the previous lab, you identified the MAC address for your device. For example, it may be similar to ```9884e3f60411```.  The value will then look similar to the following.
+2. Edit the ```clientcredentialIOT_THING_NAME``` variable on line 43.  Although this value is used for the Device Shadow Client, we will edit it for completeness.  In the previous lab, you identified the MAC address for your device. For example, it may be similar to ```9884e3f60411```.  The value will then look similar to the following.
 
    ```c
    #define clientcredentialIOT_THING_NAME "9884e3f60411"
    ``` 
-4. Edit the ```clientcredentialWIFI_SSID``` variable on line 58.  For example, if your SSID is ``MySuperWiFi", then the value will look similar to the following.
+3. Edit the ```clientcredentialWIFI_SSID``` variable on line 58.  For example, if your SSID is ``MySuperWiFi", then the value will look similar to the following.
 
    ```c
    #define clientcredentialWIFI_SSID       "MySuperWiFi"
    ```
-5. Edit the ```clientcredentialWIFI_PASSWORD``` variable on line 63.  For example, if your Wi-Fi password is ```p@s$woRd```, then the value will look similar to the following.
+4. Edit the ```clientcredentialWIFI_PASSWORD``` variable on line 63.  For example, if your Wi-Fi password is ```p@s$woRd```, then the value will look similar to the following.
 
    ```c
    #define clientcredentialWIFI_PASSWORD   "p@s$woRd"
    ```
    
-Next, we need to generate the header file that holds credentials for connecting to AWS IoT Core.  In CCS8, open the file ```application_code``` > ```common_demos``` > ```include``` > ```aws_clientcredential_keys.h```.
+Next, we need to generate the header file that holds credentials for connecting to AWS IoT Core.  In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include``` > ```aws_clientcredential_keys.h```.
 
-On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to ```$LAB_REPOPATH``` > amazon-freertos > demos > common > ```devmode_key_provisioning``` > ```CertificateConfigurationTool```.  Double-click ```CertificateConfigurator.html```.
+On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to ```$LAB_REPOPATH``` > amazon-freertos > tools > certificate_configuration.  Double-click ```CertificateConfigurator.html```.
 
 1. For **Certificate PEM file**, click **Browse...** and navigate to ```$LAB_REPOPATH``` > ```credentials```.  Select the certificate file, which will look similar to ```9884e3f60411_certificate.pem```.
 2. For **Private Key PEM file**, click **Browse...** and navigate to ```$LAB_REPOPATH``` > ```credentials```.  Select the private key file, which will look similar to ```9884e3f60411_private_key.pem```.
 3. Click **Generate and save ```aws_clientcredential_keys.h```**.  Save the file to the filesystem.  I most cases, it will be saved to your Downloads directory.
+
+    <img src="images/Lab2/certificate_configuration_tool.png" alt="drawing" style="width:600px;"/>
+
 4. Copy the ```aws_clientcredential_keys.h``` in your Downloads directory ***over*** the ```aws_clientcredential_keys.h``` in the directory ```$LAB_REPOPATH``` > amazon-freertos > demos > common > ```include```.
-5. In CCS8, the file should already be refreshed.  If not, double-click on aws_clientcredential_keys.h again.  It should look similar to the following (the content has been modified so this is for example purposes only).
+5. In DAVE4, the file should already be refreshed.  If not, double-click on aws_clientcredential_keys.h again.  It should look similar to the following (the content has been modified so this is for example purposes only).
 
    ```c
 	/*
@@ -144,33 +122,17 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 
     <img src="images/Lab2/dave4_menubar_debug.png" alt="drawing" style="width:600px;"/>
 
-3. If you get a dialog box to upgrade the on-board debugger firmware, click Update. 
+3. Before continuing, login to the AWS Console, and then navigate to the AWS IoT Core console.
+4. On the left-hand side, click the **Test** menu item.
+5. For the subscription topic, enter ```#```
+6. Click the ```Subscribe to topic``` button.
+7. Click the **Resume** button in the DAVE4 Debug perspective menu bar.
 
-   <img src="images/Lab2/firmware_update_message.png" alt="drawing" style="width:600px;"/>
+    <img src="images/Lab2/dave4_debug_resume.png" alt="drawing" style="width:600px;"/>
 
-4. Double-click **GDB SEGGER J-Link Debugging** to create a new debug configuration.
-   In the **Startup** tab enable semihosting and click **Debug**
+8. The demo should now be running.  When completed, the output in the console will be similar to the following.
 
-   <img src="images/Lab2/dave4_debug_enable_semihosting" alt="drawing" style="width:600px;"/>
-
-5. 
-
-5. When the debug process starts, your debugging session will start and an automatic breakpoint will be added for the ```main()``` function.
-6. Before continuing, login to the AWS Console, and then navigate to the AWS IoT Core console.
-7. On the left-hand side, click the **Test** menu item.
-8. For the subscription topic, enter ```#```
-9. Click the ```Subscribe to topic``` button.
-10. Display the **Semihosting and SWV** console.
-
-	<img src="images/Lab2/dave4_debug_console.png" alt="drawing" style="width:600px;"/>
-
-10. Click the **Resume** button in the DAVE4 Debug perspective menu bar.
-
-    <img src="images/Lab2/dave4_debug_resume.png" alt="drawing" style="width:300px;"/>
-
-11. The demo should now be running.  When completed, the output in the console will be similar to the following.
-
-    <img src="images/Lab2/full_demo_completed.png" alt="drawing" style="width:600px;"/>
+    <img src="images/Lab2/hello_world_demo_run.png" alt="drawing" style="width:900px;"/>
     
 In the following sections, we will modify the sample program to do something a bit more interesting with it.
 
@@ -283,11 +245,13 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
    In the Terminal logging window, you will see the following:
    
    ```c
-   8 1670 [Tmr Svc] Wi-Fi connected to AP Gwypo_2.4GHz_1878.
-   9 1670 [Tmr Svc] IP Address acquired 192.168.29.199
-   10 1671 [Tmr Svc] Creating MQTT Echo Task...
-   11 1672 [MQTTEcho] My Client ID is [9884e3f60411]
-   12 1672 [MQTTEcho] MQTT echo attempting to connect to audqth7zumq6e.iot.us-east-1.amazonaws.com.
+	3 177 [Tmr Svc] Wi-Fi module initialized (MAC Address: 84:f3:eb:a3:1a:7a).
+	4 177 [Tmr Svc] Connecting to AP...
+	5 5134 [Tmr Svc] Wi-Fi Connected to AP. Creating tasks which use network...
+	6 5135 [Tmr Svc] IP Address acquired 10.42.0.97
+	7 5135 [Tmr Svc] Creating MQTT Echo Task...
+	8 5136 [MQTTEcho] My Client ID is [84f3eba31a7a]
+	9 5136 [MQTTEcho] MQTT echo attempting to connect toa3vp4g8bw5u3sd.iot.us-east-1.amazonaws.com.
    ```
    
    Next, we will learn how to integrate this demo with some of the on-board components.
@@ -298,49 +262,33 @@ The Infineon XMC4800 IoT Connectivity Kit is a feature-packed development board 
 
 Out of the box, the LEDs are disabled because GPIOs connected to them act as inputs by default. In this lab, we will configure the GPIOs connected to the LEDs as outputs.
 
-1. In CCS8, open ```application_code``` > ```ti_code``` > ```CC3220SF_LAUNCHXL.c```.
-2. Scroll to line 225, for pin configuration ```GPIO_PinConfig gpioPinConfigs[]```.
-3. The changes are done to the last four elements in the array, so the array will look like the following.  Note the commas added to the unremarked lines.
+1. In DAVE4, open ```common_demos``` > ```source``` > ```aws_hello_world_lab2.c```.
+2. Add the inclusion of the LED library
+   ```c
+   #include "Board_LED.h.h"
+   ```
+
+2. Scroll to ```vStartMQTTEchoDemo()``` function. After the call to ```prvMacForHumans(thing_mac_address)``` add
 
    ```c
-    CC3220SF_LAUNCHXL_GPIO_LED_D6,
-    GPIOCC32XX_GPIO_10 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
-    CC3220SF_LAUNCHXL_GPIO_LED_D5,
-    GPIOCC32XX_GPIO_11 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
+   LED_Initialize();
    ```
    
-4. In DAVE, open ```application_code``` > ```main.c```.  Scroll to line 126.  Note the API call ```GPIO_Init()```.  This API call is not part of Amazon FreeRTOS; rather, it is part of the TI SDK.  Since it is already being initialized by the scheduler startup hook, we do not need to add it again.
-
-Next, we will add GPIO code to perform a tick-tock action between the two GPIOs.
-
-1. In DAVE, open ```application_code``` > ```common_demos``` > ```source``` > ```aws_hello_world.c```.
-2. Scroll to approximately line 510, to function ```void vStartMQTTEchoDemo( void )```.
-
-   ```c
-       configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
-
-       GPIO_write(Board_GPIO_LED1, Board_GPIO_LED_OFF);
-       GPIO_write(Board_GPIO_LED2, Board_GPIO_LED_OFF);
-
-       prvMacForHumans(thing_mac_address);
-
-       /* Create the message buffer used to pass strings from the MQTT callback
-   ```
 3. Next, we will turn on one of the LEDs in the publish function.  Find the function ```static void prvPublishNextMessage( BaseType_t xMessageNumber )```.  Add the following directly before the ```( void ) xReturned``` statement.
 
    ```c
-        GPIO_write(Board_GPIO_LED2, Board_GPIO_LED_OFF);
-        GPIO_write(Board_GPIO_LED1, Board_GPIO_LED_ON);
+    LED_On(0);
+    LED_Off(1);
    ```
 4. Next, we will add the opposite effect to the task performing the ACK publish.  The function name is ```static void prvMessageEchoingTask( void * pvParameters )```.  At the end of the block within the following ```if``` condition, place the alternating LED code.
 
    ```
-           if( xBytesReceived <= ( sizeof( cDataBuffer ) - ( size_t ) echoACK_STRING_LENGTH ) )
-           {
-               ...
-               GPIO_write(Board_GPIO_LED1, Board_GPIO_LED_OFF);
-               GPIO_write(Board_GPIO_LED2, Board_GPIO_LED_ON);
-           }
+    if ( xBytesReceived <= ( sizeof( cDataBuffer ) - ( size_t ) echoACK_STRING_LENGTH ) )
+    {
+      ...
+      LED_Off(0);
+      LED_On(1);
+    }
    ```
 5. Run the DAVE project again.  You will notice the led alternating on what is marked D8 and D9 on the development board.
 

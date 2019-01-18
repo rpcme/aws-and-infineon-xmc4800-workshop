@@ -19,25 +19,113 @@ This lab, and all other labs, require an AWS account. To create an AWS Account, 
 
 Note on the USB stick: on some Windows computers, you may be prohibited from running the installer from the USB drive.  If you get an error executing the installer, copy the installer to C:\Temp and then run it from C:\Temp.
 
-#### DAVE4 - professional development platform for XMC microcontrollers
+#### Git
+
+Git software is required.
+
+For Windows specifically, the labs require [Git for Windows](https://gitforwindows.org/).    
+
+When you install and setup Git, you will be able to clone repositories as well as perform ```diff``` and ```status``` operations in the local source tree that will help you understand what has changed in the source over time.
+
+On Mac OSX, Git is already installed on your system.
+
+On Windows, install Git for Windows](https://gitforwindows.org/), which includes the MINGW shell environment that integrates nicely with the Windows environment. This will enable you to use Python 2.7 from the command line within a UNIX-like environment, which will simplify working through the labs.
+
+### Initializing the Repository
+
+In this section, you will learn the physical directory layout for Amazon FreeRTOS.  You will clone the git repository that include the Infineon DAVE projects and a reference to Amazon FreeRTOS as a git repository submodule.
+
+From your Home directory, check out the sources.
+
+1. Open a console window on your workstation to perform work on the command line.
+2. Clone the repository.
+```
+git clone --recursive https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git
+```
+3. In your HOME directory, you should now have directory ```aws-and-infineon-xmc4800-workshop```.
+
+From this point onward, and throughout the remaining labs, the repository checkout directory is referred to as ```LAB_REPOPATH```.
+
+Alternatively, if you don't have git or you don't want to clone the repository (which is the best option, perform these steps:
+
+1. Navigate to https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git.
+2. Download the repository as ZIP.  Extract.  This will be known as ```LAB_REPOPATH```.
+3. Navigate to https://github.com/aws/amazon-freertos.
+4. Download the repository as ZIP.  Extract to ```LAB_REPOPATH/amazon-freertos```.  ```LAB_REPOPATH/amazon-freertos``` should have ```demos```, ```lib```, ```tests```, and ```tools``` directories.
+
+#### DAVE™ - professional development platform for XMC microcontrollers
+
+<img src="images/Lab1/dave4_splash.png" alt="drawing" style="width:600px;"/>
 
 Infineon DAVE4 is required to complete the labs.
+1. Browse to [DAVE™ software download](https://infineoncommunity.com/dave-download_ID645)
+2. Register and select the DAVE™ package you would like to download depending on your operating system
+3. To install DAVE™, all you do is unpacking the downloaded zip file to a location of your choice (i.e. ```c:\DAVE4```).
+> **NOTE**
+For Windows, a number of problems have been reported when people try to use Windows Explorer to unzip the zip file. Please use a third-party unzip program, such as 7-Zip
 
-> USB Stick
-> > 1. Insert the USB Memory Stick to your laptop.  If you are taking this lab outside from a sponsored AWS event, download the software from Texas Instruments.
-> > 2. Locate the directory for your target platform. If you are running Windows, enter the ```windows``` directory.  If you are running MacOSX, enter the macosx directory.
-> > Double-click the installer.
->
-> Download
-> > **NOTE** if you are at an AWS sponsored event and received the USB key, please do not download the payload from the internet.
-> > 
-> > 1. Navigate to the [TI Wiki](http://processors.wiki.ti.com/index.php/Download_CCS#Code_Composer_Studio_Version_8_Downloads).
-> > 2. Download the ***offline installer*** installer for your target platform.
-> > 3. Double-click the downloaded installer.
+4. To simplify starting DAVE4 in the future, create a shortcut on your desktop to the DAVE.exe file in the eclipse folder.
+5. Download and install the [J-Link Software and Documentation pack for Windows](https://www.segger.com/downloads/jlink/JLink_Windows.exe)
 
-Windows: for install directory, leave default ```C:\ti```
+We will now check the DAVE4 installation. For this purpose we will import the Amazon FreeRTOS Hello World Demo that serves additionally as the baseline for all the following labs
 
-For **Processor Support**, choose **SimpleLink(tm) Wi-Fi(R) CC32xx Wireless MCUs**.
+1. Open DAVE4.  When you first open DAVE4, the IDE will prompt your for a workspace location. Choose the default location and check the box "don't ask again".
+2. Import the project.
+   1. Open the import dialog by clicking **File > Import...**.
+   2. Expand **Infineon**, select **DAVE Project**, and click **Next**.
+   
+    <img src="images/Lab1/dave4_project_import_action_selection.png" alt="drawing" style="width:600px;"/>
+
+   3. For 	**Select search-directory**, choose **Browse...**
+   4. Locate the directory ```LAB_REPOPATH```, and then navigate to ```LAB_REPOPATH/demos/infineon/xmc4800_iotkit/dave4```.  Click Open.
+   5. Ensure that **aws_demos** is checked in the **Discovered projects**.
+   6. Ensure that the **Copy projects into workspace** checkbox is NOT checked.
+   
+      <img src="images/Lab1/dave4_project_import_dialog.png" alt="drawing" style="width:600px;"/>
+      
+   7. Click **Finish**.
+3. Run a full compile by clicking **Project > Build Active Project** or the Build Active Project button in the menu bar.
+   
+   <img src="images/Lab2/dave4_menubar_compile.png" alt="drawing" style="width:600px;"/>
+
+At this point, the project builds but it is not configured properly for connectivity.  In the next section, we will configure the project to run the Hello World demo.
+
+We will now try to run the unmodified aws_demo project
+
+1. To flash and start debugging the demo click the debug button in the menu bar.
+
+    <img src="images/Lab2/dave4_menubar_debug.png" alt="drawing" style="width:600px;"/>
+
+2. If you get a dialog box to upgrade the on-board debugger firmware, click Update. 
+
+   <img src="images/Lab1/firmware_update_message.png" alt="drawing" style="width:600px;"/>
+
+3. Double-click **GDB SEGGER J-Link Debugging** to create a new debug configuration.
+   In the **Startup** tab enable semihosting and click **Debug**
+
+   <img src="images/Lab1/dave4_debug_enable_semihosting.png" alt="drawing" style="width:600px;"/>
+
+4. If it is the first time you lunch the debugger in the current workspace the followiing dialog will pop up. Check the **Remember my decision** checkbox and click **Yes**. 
+
+   <img src="images/Lab1/dave4_confirm_perspective_switch.png" alt="drawing" style="width:600px;"/>
+
+5. When the debug process starts, your debugging session will start and an automatic breakpoint will be added for the ```main()``` function.
+
+11. Display the **Semihosting and SWV** console.
+
+	<img src="images/Lab1/dave4_debug_console.png" alt="drawing" style="width:600px;"/>
+
+12. Click the **Resume** button in the DAVE4 Debug perspective menu bar.
+
+    <img src="images/Lab2/dave4_debug_resume.png" alt="drawing" style="width:600px;"/>
+
+13. The demo should now be running.  When completed, the output in the console will be similar to the following.
+
+    <img src="images/Lab1/dave4_debug_console_mac_address.png" alt="drawing" style="width:800px;"/>
+
+>Make a note of the MAC address for later usage
+
+You will configure the project with your WiFi settings and the certificates to connect to AWS IoT Core in the next lab.
 
 #### Python
 
@@ -90,42 +178,6 @@ You need to get AWS programmatic access credentials to configure the AWS CLI.
 
 Now, enter ```aws configure``` once more.  Enter the Access Key, Secret Key, Region (us-east-1), and format (json) when prompted. 
 
-
-#### Git
-
-Git software is required.
-
-For Windows specifically, the labs require [Git for Windows](https://gitforwindows.org/).    
-
-When you install and setup Git, you will be able to clone repositories as well as perform ```diff``` and ```status``` operations in the local source tree that will help you understand what has changed in the source over time.
-
-On Mac OSX, Git is already installed on your system.
-
-On Windows, install Git for Windows](https://gitforwindows.org/), which includes the MINGW shell environment that integrates nicely with the Windows environment. This will enable you to use Python 2.7 from the command line within a UNIX-like environment, which will simplify working through the labs.
-
-### Initializing the Repository
-
-In this section, you will learn the physical directory layout for Amazon FreeRTOS.  You will clone the git repository that include the Infineon DAVE projects and a reference to Amazon FreeRTOS as a git repository submodule.
-
-From your Home directory, check out the sources.
-
-1. Open a console window on your workstation to perform work on the command line.
-2. Clone the repository.
-```
-git clone --recursive https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git
-```
-3. In your HOME directory, you should now have directory ```aws-and-infineon-xmc4800-workshop```.
-
-From this point onward, and throughout the remaining labs, the repository checkout directory is referred to as ```LAB_REPOPATH```.
-
-Alternatively, if you don't have git or you don't want to clone the repository (which is the best option, perform these steps:
-
-1. Navigate to https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git.
-2. Download the repository as ZIP.  Extract.  This will be known as ```LAB_REPOPATH```.
-3. Navigate to https://github.com/aws/amazon-freertos.
-4. Download the repository as ZIP.  Extract to ```LAB_REPOPATH/amazon-freertos```.  ```LAB_REPOPATH/amazon-freertos``` should have ```demos```, ```lib```, ```tests```, and ```tools``` directories.
-
-
 ### Registering Your Device
 
 Throughout these Labs, the primary interface for working with the AWS Cloud is the command line.
@@ -136,16 +188,6 @@ From time to time visual confirmation may be an effective way to correlate CLI f
 
 *Also*, some learners may want to simply copy-paste CLI commands and code.  Although not disallowed, **it is strongly encouraged learners type in CLI commands and code**.  Otherwise, learning oversights may occur in performing the configuration and coding.
 
-#### Identifying Your Device's Unique ID
-
-There are a few ways of identifying a unique ID on a microcontroller based on what the MCU or relating peripherals are part of the device.  Some may choose using the MCU serial number, which is a number assigned to the microcontroller by the manufacturer.  In our case, we will use an identifier used with networked devices: the MAC address.
-
-The MAC address composition that may be familiar to you has the format XX:XX:XX:XX:XX:XX.  However, we cannot use that format when creating AWS IoT things since the colon is not a supported character.
-
-Another challenge is how to retrieve the MAC address when it's printed neither on the MCU nor the development board.  
-
-**WRITE INSTRUCTION ON GETTING THE MAC ADDRESS HERE**
-
 #### Create the Thing Object
 
 In this step, you will create the Thing object - a representation of your device in the AWS IoT Core Device Registry.
@@ -153,7 +195,7 @@ In this step, you will create the Thing object - a representation of your device
 In the previous section, you acquired the MAC Address of the device.  The Thing Name will be the MAC Address, but the colons need to be removed.
 
 1. Open the Terminal or CMD window.
-2. Set the variable for the Thing name.  If your MAC Address is ```98:84:e3:f6:04:11```, then your Thing Name will be ```9884e3f60411```.
+2. Set the variable for the Thing name.  Time to use the MAC address you got when checking the DAVE4 installation. If your MAC Address is ```98:84:e3:f6:04:11```, then your Thing Name will be ```9884e3f60411```.
 3. To create the virtual device, issue the following command from the  *terminal window*:
    
    ```bash
@@ -298,11 +340,11 @@ aws iot attach-principal-policy            \
 
 
 
-At this point, when the client code makes a connection using the Client certificate, theit will be able to perform all AWS IoT actions.
+At this point, when the client code makes a connection using the Client certificate, then it will be able to perform all AWS IoT actions.
 
 ### Outcomes
 
-In this lab, you learned about the software needed to build solutions on top of AWS with the Texas Instruments CC3220SF.  Also, you learned about the AWS IoT Core objects needed to make a successful connection.
+In this lab, you learned about the software needed to build solutions on top of AWS with the Infineon XMC4800 IoT Connectivity Kit.  Also, you learned about the AWS IoT Core objects needed to make a successful connection.
 
 In the next lab, you will learn about how to make the connection successful using these objects and understand the basic Amazon FreeRTOS framework.  
 
