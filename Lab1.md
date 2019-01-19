@@ -77,7 +77,7 @@ We will now check the DAVE4 installation. For this purpose we will import the Am
     <img src="images/Lab1/dave4_project_import_action_selection.png" alt="drawing" style="width:600px;"/>
 
    3. For 	**Select search-directory**, choose **Browse...**
-   4. Locate the directory ```LAB_REPOPATH```, and then navigate to ```LAB_REPOPATH/demos/infineon/xmc4800_iotkit/dave4```.  Click Open.
+   4. Locate the directory ```LAB_REPOPATH```, and then navigate to ```LAB_REPOPATH/amazon-freertos/demos/infineon/xmc4800_iotkit/dave4_apps```.  Click Open.
    5. Ensure that **aws_demos** is checked in the **Discovered projects**.
    6. Ensure that the **Copy projects into workspace** checkbox is NOT checked.
    
