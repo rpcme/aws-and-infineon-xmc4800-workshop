@@ -108,9 +108,18 @@ int main( void )
 }
 /*-----------------------------------------------------------*/
 
+
 static void prvMiscInitialization( void )
 {
+#if defined(configPRINT_SERIALIF)
 	CONSOLE_IO_Init();
+#endif
+#if defined(configPRINT_DEBUGIF)
+	/* To compiler need to specify -specs=rdimon.specs in linker miscellaneous preferences tab, other flags
+	 * To work properly enable semihosting in debugger settings */
+	extern void initialise_monitor_handles(void);
+	initialise_monitor_handles();
+#endif
 
 	ENTROPY_HARDWARE_Init();
 }
@@ -143,7 +152,11 @@ void prvWifiConnect( void )
 
         if( xWifiStatus == eWiFiSuccess )
         {
-            configPRINTF( ( "Wi-Fi module initialized. Connecting to AP...\r\n" ) );
+        	uint8_t mac_address[6];
+        	WIFI_GetMAC(mac_address);
+            configPRINTF( ( "Wi-Fi module initialized (MAC Address: %02x:%02x:%02x:%02x:%02x:%02x).\r\n",
+            		         mac_address[0], mac_address[1], mac_address[2], mac_address[3], mac_address[4], mac_address[5] ) );
+            configPRINTF( ( "Connecting to AP...\r\n" ) );
         }
         else
         {

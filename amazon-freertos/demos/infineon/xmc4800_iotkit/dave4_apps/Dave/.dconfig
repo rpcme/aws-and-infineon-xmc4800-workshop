@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ProjectConfig>
+    <ResourceReserve>
+        <Resource MUri="" Proxy="http://resources/48.1.0/port/p/2/pad/15"/>
+        <Resource MUri="" Proxy="http://resources/48.0.0/peripheral/vadc/0/backgnd"/>
+        <Resource MUri="" Proxy="http://resources/48.0.0/peripheral/usic/1/channel/0"/>
+        <Resource MUri="" Proxy="http://resources/48.1.0/port/p/2/pad/14"/>
+    </ResourceReserve>
+    <Solver>
+        <SolverBndMap/>
+    </Solver>
+</ProjectConfig>

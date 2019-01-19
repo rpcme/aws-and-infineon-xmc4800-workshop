@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project MotherSystem_Version="" Name="aws_demos_apps" Path="C:\Work\Resources\AmazonFreeRTOS\amazon-freertos-1.4.6\demos\infineon\xmc4800_iotkit\dave4_apps">
+    <COMPILER>
+        <Name>ARM_GCC_HOME</Name>
+        <Version/>
+        <Memory_Model/>
+    </COMPILER>
+    <DEVICE>
+        <Sales_Code>XMC4800-F100x2048</Sales_Code>
+        <Description/>
+    </DEVICE>
+    <Generated_Files>
+        <Source_Files>
+            <Source_File>
+                <File_Name>DAVE.c</File_Name>
+                <Path>\Dave\Generated\DAVE.c</Path>
+                <Type>C File</Type>
+            </Source_File>
+        </Source_Files>
+        <Header_Files>
+            <Header_File>
+                <File_Name>DAVE.h</File_Name>
+                <Path>\Dave\Generated\DAVE.h</Path>
+                <Type>H File</Type>
+            </Header_File>
+            <Header_File>
+                <File_Name>DAVE_Common.h</File_Name>
+                <Path>\Dave\Generated\DAVE_Common.h</Path>
+                <Type>H File</Type>
+            </Header_File>
+        </Header_Files>
+        <Library_Files/>
+        <Assembly_Files/>
+    </Generated_Files>
+    <Include_Path>
+        <Path/>
+        <Path>\lib\third_party\XMCLib\2.1.20\CMSIS\Include</Path>
+        <Path>\lib\third_party\XMCLib\2.1.20\CMSIS\Infineon\XMC4800_series\Include</Path>
+        <Path>\lib\third_party\XMCLib\2.1.20\drivers\inc</Path>
+        <Path>\lib\third_party\XMCLib\2.1.20\third_party\ESP_AT_Lib\src\include</Path>
+        <Path>\lib\aws\include</Path>
+        <Path>\lib\aws\include\private</Path>
+        <Path>\lib\aws\FreeRTOS\portable\GCC\ARM_CM4F</Path>
+        <Path>\application_code\common_demos\include</Path>
+        <Path>\application_code\infineon_code</Path>
+        <Path>\lib\third_party\mbedtls\include</Path>
+        <Path>\lib\third_party\pkcs11</Path>
+        <Path>\config_files</Path>
+        <Path>\lib\third_party\jsmn</Path>
+    </Include_Path>
+    <Preprocessor_Symbols>
+        <Assembler_Symbol>XMC4800_F100x2048=</Assembler_Symbol>
+        <Compiler_Symbol>XMC4800_F100x2048=</Compiler_Symbol>
+    </Preprocessor_Symbols>
+</Project>
