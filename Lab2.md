@@ -114,7 +114,7 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 
 ### Testing the connection
 
-1. Rebuild the project by clicking **Project > Build Active Project** or Build Active Project button in menu bar.
+1. Rebuild the project by clicking **Project > Build Active Project** or **Build Active Project** button in menu bar.
 
     <img src="images/Lab2/dave4_menubar_compile.png" alt="drawing" style="width:600px;"/>
 

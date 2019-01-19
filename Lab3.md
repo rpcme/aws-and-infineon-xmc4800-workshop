@@ -2,19 +2,13 @@
 ## Lab 3: Using AWS IoT Core
 
 
-In this lab, you will learn how to organize code into a new Amazon FreeRTOS Task, use the die temperature sensor (DTS) of the MCU, ingest basic telemetry data, and then do something interesting with the data in the AWS Cloud. 
+In this lab, you will learn how to organize code into a new Amazon FreeRTOS Task, use the internal die temperature sensor (DTS) of the Infineon XMC4800, ingest basic telemetry data, and then do something interesting with the data in the AWS Cloud. 
 
 ### Premise
 
 Acquiring sensor data from the local environment, pushing it to the cloud, and then doing something interesting with the data is one of the most common underlying practices when developing IoT solutions.
 
-There are many types of sensors available.  Some deliver data as binary (digital) and other as waveform (analog).  More complicated sensors are microcontrollers themselves.  In this lab, we will be working with the TMP006, the on-board temperature sensor that is manufactured by Texas Instruments.
-
-The TMP006 sensor communicates with the CC3220SF via an I2C (eye-squared-see) bus.  I2C is a two-wire protocol, where there are SDA and SCL channels.  Discussing the I2C protocol in detail is beyond the scope of this lab.  You can read about the [I2C Specification](http://i2c.info/i2c-bus-specification) later for more information.
-
-The TMP006 sensor is a microcontroller in its own right.  It operates as an I2C slave and enables reads and writes to the registers it manages.  To connect to the sensor, the CC3220SF must know the sensor's I2C address.  When opening a session with a slave on the I2C bus, this address must be known.
-
-A register in the sensor holds the temperature reading.  In order to retrieve it, we need to request the data from the sensor.  The API to perform this action is provided by Texas Instruments in the CC3220SF SDK.
+The XMC™ Lib consists of low level drivers which contain APIs for the XMC™ product family peripherals. The System Control Unit (SCU) driver library is a part of the XMC™ Lib which groups functions for controlling the General Control Unit including temperature monitoring, Clock Control Unit, Reset Control Unit and Interrupt System. You will use the DTS driver to read the internal temperature sensor. 
 
 Finally, we will do something interesting with the data by taking the data and pushing it to AWS IoT Analytics.  In this lab we will use AWS IoT Analytics to store data so it can be easily displayed by your visualization of choice.  We will demonstrate how to get large datasets from AWS IoT Analytics.
 
@@ -35,127 +29,57 @@ In this section, we will remove the ```xCreateTask``` call for the original Echo
    ```
 3. Select the xTaskCreate call, and click delete.
 
-### Roll back GPIO Pin configurations
-
-In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we are about to use I2C, we need to remove those pin configurations from the array.
-
-1. In CCS8, open ```application_code``` > ```ti_code``` > ```CC3220SF_LAUNCHXL.c```.
-2. Scroll to line 225, for pin configuration ```GPIO_PinConfig gpioPinConfigs[]```.
-3. The changes are done to the last four elements in the array, so the array will look like the following.
-
-   ```c
-    /* CC3220SF_LAUNCHXL_GPIO_LED_D6, */
-    GPIOCC32XX_GPIO_10 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
-    /* CC3220SF_LAUNCHXL_GPIO_LED_D5, */
-    GPIOCC32XX_GPIO_11 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
-   ```
- 
 ### The Temperature Task
 
 1. Scroll to the bottom of ```aws_hello_world.c```.  Your cursor should be beneath the function you implemented in Lab 2: ```prvMacForHumans```.
 2. Add the ```#define```s used for this task.  Normally, this would go into a header file, but we do it here to keep the implementation simple.
 
    ```c
-   #define Board_TMP_ADDR                  ( 0x41 )
    #define TEMPERATURE_TASK_READ_DELAY_MS  3000
-   #define TEMPERATURE_TASK_SENSOR_ADDRESS Board_TMP_ADDR
-   #define TEMPERATURE_TASK_TMP_REGISTER   0x0001
    ```
-   The first ```#define``` is the sensor's I2C address.  The last one, inferred by its name, is the register to be read from the sensor to acquire the temperature data.  Note this is not a "raw number", it is a couple of bit data fields we will need to manipulate in code.
+
 3. Implement the ```prvTempSensorReaderTask```.  We will walk through this step by step.
 
    Here, we are making some local declarations.
    ```c
    static void prvTempSensorReaderTask( void * pvParameters )
    {
-	    uint8_t         txBuf[1];       // Register to read
-	    uint8_t         rxBuf[2];       // Data received
-	    I2C_Transaction i2cTxn;
-	
 	    char cDataBuffer[ 64 ];
 	    xMQTTTaskParameter *pxParameters;
 	    pxParameters = ( xMQTTTaskParameter * ) pvParameters;
 	
 	    float           temperatureC;
-	    float           temperatureF;
-   ```
-   The I2C parameters are initialized to set the bus speed so the I2C controller knows what speed to interpret signals.
-   
-   ```c
-	    /*
-	     *  Create/Open the I2C bus that talks to the TMP sensor
-	     */
-	    I2C_Params      i2cParams;
-	    I2C_Params_init(&i2cParams);
-	    i2cParams.bitRate = I2C_400kHz;
-	```
-	
-	Here, we are initializing the communication with the I2C bus.  You will see from the next lab that this has to be done only once to communicate with all slaves on the I2C bus.
-	
-	If something goes wrong here, something very bad happened.  It could also be that the bus was not configured by the Board configuration code -- the file we changed when enabling and disabling the GPIO PINs for the LEDs.
-	
-	```c
-	    if ( xI2C == NULL )
-	      xI2C = I2C_open( Board_I2C_TMP,  // Defined in Board.h
-	                       &i2cParams );
-	    vTaskDelay( pdMS_TO_TICKS( 7 ) ); // ensure configuration mode completes, 7ms, super magic number
-	
-	    if ( xI2C == NULL ) {
-	      configPRINTF(("CRITICAL: Could not open I2C bus. Reset the board.\r\n"));
-	      while (1);
-	    }
-	```
-	
-	When we communicate with the I2C sensor, we need to define how many character buffers to send, and what to send.  In this case, we are telling the sensor to return back the value of the register at ```TEMPERATURE_TASK_TMP_REGISTER```.  If you look back up as the declarations, you see the ```rxBuf[2]``` declaration.  This should tell you that the sensor will return back two char buffers.
-	
-	```c
-	
-	    txBuf[0] = TEMPERATURE_TASK_TMP_REGISTER;
-	```
-	
-	An important point in this section about something we haven't mentioned - how do we know *which slave* to talk to?  Each sensor has an address assigned to it, and the address must be unique on the bus.  You may also notice when looking at more high end sensors, more than one address is configurable (switchable by mechanics such as pull up on a pin).
-	
-	```c
-	    i2cTxn.slaveAddress = TEMPERATURE_TASK_SENSOR_ADDRESS;
-	    i2cTxn.writeBuf     = txBuf;
-	    i2cTxn.writeCount   = 1;
-	    i2cTxn.readBuf      = rxBuf;
-	    i2cTxn.readCount    = 2;
-	```
 
-	Here, we configure a delay to roughly define the interval at which to do the temperature reading, which is *at least* every three seconds.
+        XMC_SCU_EnableTemperatureSensor();
+        XMC_SCU_CalibrateTemperatureSensor(0, 0);
+
+   ```
+
+	Here, we start the temperature meaurement conversion and configure a delay to roughly define the interval at which to do the temperature reading, which is *at least* every three seconds.
 	
 	```c
 	    while (1) {
+            XMC_SCU_StartTemperatureMeasurement();
 	        vTaskDelay( pdMS_TO_TICKS( TEMPERATURE_TASK_READ_DELAY_MS ) );
 	```
 	Sometimes, you may be initializing the MQTT handle in another task that may have not had the chance to initialize the handle yet. In this case, we go back to top and to the vTaskDelay again.
 	
 	```c
-	        if ( xMQTTHandle == NULL ) continue;
+            if ( xMQTTHandle == NULL ) continue;
 	```
 	
-	Here is the real work relating to the host communicating with the sensor.  The ```I2C_transfer``` call abstracts a lot of complicated handling in terms of sending and receiving, and managing the contents of the buffers.  When the transaction succeeds, we perform some bitfield manipulation to get the float value.
-	
-	```c	
-            /* Do not hold the semaphore for longer than needed. */
-            if ( I2C_transfer(xI2C, &i2cTxn) ) {
-                temperatureC = (rxBuf[0] << 6) | (rxBuf[1] >> 2);
-            }
-   ```
-   Every sensor requires some kind of environmental calibration.  Here, we are a bit sloppy amd use a common "fudging" factor.
+   Here, we read the result of temperature conversion and calculate the actual temperature in Celsius and Fahrenheit degrees.
    
    ```c	
-	        temperatureC *= 0.03125; // FIXME: Should be reading reference voltage off sensor
-	        temperatureF = ( ( temperatureC * 9 ) / 5 ) + 32;
+            temperatureC = (XMC_SCU_GetTemperatureMeasurement() - 605) / 2.05F;
 	
-	        configPRINTF(("Celsius: %f, Fahrenheit: %f\r\n", temperatureC, temperatureF));
+            configPRINTF(("Celsius: %f\r\n", temperatureC));
    ```
    
    Now that we have the data, we can send it to the cloud.  We want to send the data in JSON format.  Also, we want the message to contain our Device ID so when the data gets logged somewhere, it can keep a record of where it came from.  As you can see, we are using the familiar ```thing_mac_address``` again.
    
    ```c	
-	        snprintf(cDataBuffer, sizeof( cDataBuffer), "{\"temperature\":%f, \"d\":\"%s\"}", temperatureF, thing_mac_address);
+	        snprintf(cDataBuffer, sizeof( cDataBuffer), "{\"temperature\":%f, \"d\":\"%s\"}", temperatureC, thing_mac_address);
 	```
 	Next, we simply organize the parameters to publish using the already initialized MQTT Agent.
 	
@@ -168,7 +92,7 @@ In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we a
 	        pxPublishParams.xQoS =  eMQTTQoS1;
 	
 	        if ( MQTT_AGENT_Publish(xMQTTHandle, &( pxPublishParams ),
-	                democonfigMQTT_TIMEOUT) == eMQTTSuccess )
+	                democonfigMQTT_TIMEOUT) == eMQTTAgentSuccess )
 	        {
 	            configPRINTF(("Outbound sent successfully.\r\n"));
 	        }
@@ -180,18 +104,13 @@ In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we a
 	    }
 	}
    ```
-4. Add the globals and the function declaration.  You can put the following declaration beneath the ```thing_mac_address``` declaration.
-
-   ```c
-   static I2C_Handle xI2C;
-   ```
-   
-   Next, add the function declaration.  This can be placed below the function declaration for ```prvMacForHumans```.
+4. Add the function declaration. This can be placed below the function declaration for ```prvMacForHumans```.
    
    ```c
    static void prvTempSensorReaderTask( void * pvParameters );
    ```
-5. Add the structure definitions.  There are two structures that need to be defined. One is for the Task parameter and the other is for managing sensor data.  This can be placed under the ```xI2C``` declaration.
+
+5. Add the structure definitions.  There are two structures that need to be defined. One is for the Task parameter and the other is for managing sensor data.  
 
    ```c
    
@@ -233,7 +152,6 @@ In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we a
       ```c
           configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
           BaseType_t xReturned;
-          I2C_init();
       ```	
 7. Add the temperature task ```xCreateTask``` call to the ```void vStartMQTTEchoDemo( void )``` function.  As you might recall, in the temperature task we relied on task parameters to pass along the topic name for publishing the JSON payload to the AWS Cloud.
    
@@ -244,15 +162,12 @@ In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we a
        {
            configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
            BaseType_t xReturned;
-           I2C_init();
            xMQTTTaskParameter taskParameter_temperature;
     
            ...
    ```
    
-   At the same time, remove the ```GPIO_write()``` calls.
-
-9. Move the cursor back to the ```void vStartMQTTEchoDemo( void )``` function.  Beneath the configASSERT statement, add the following code.
+    Move the cursor back to the ```void vStartMQTTEchoDemo( void )``` function.  Beneath the configASSERT statement, add the following code.
 
    ```c
         if ( xReturned == pdPASS )
@@ -261,7 +176,7 @@ In the last lab, we enabled pin configurations to use the GPIO LEDs.  Since we a
             snprintf( taskParameter_temperature.topic, sizeof( taskParameter_temperature.topic ), "temperature/%s", thing_mac_address );
 
             xReturned = xTaskCreate( prvTempSensorReaderTask,
-                                     "TMP006",
+                                     "DTS",
                                      TEMP_TASK_STACK_SIZE,
                                      ( void * ) &taskParameter_temperature,
                                      TEMP_TASK_PRIORITY,
@@ -294,13 +209,23 @@ At this point, the Temperature task has been implemented and is ready to run.
 2. From the menu bar, click on Services > IoT Core.
 3. On the lower left hand side, click Test.
 4. For the subscription topic, enter ```#``` and click Subscribe.
-5. In CCS, perform a Clean by running ```Project``` > ```Clean...``` and clicking the **Clean** button.  A full build should occur automatically after the clean.
-6. Press the Debug button.
-7. Click the Start button after the cursor runs to the ```main()``` breakpoint.
-8. View the output in the IoT Console.
+5. Since the sensore data is using floating point and the printf support for floating point is by default disabled, you will need to enable it in the Project properties
+    
+    <img src="images/Lab3/dave_project_properties_printf_floating_point.png" alt="drawing" style="width:600px;"/>
 
+6. In DAVE4, rebuild the project by clicking **Project > Build Active Project** or **Build Active Project** button in menu bar.
 
+    <img src="images/Lab2/dave4_menubar_compile.png" alt="drawing" style="width:600px;"/>
 
+7. To flash and start debugging the demo click the debug button in the menu bar.
+
+    <img src="images/Lab2/dave4_menubar_debug.png" alt="drawing" style="width:600px;"/>
+
+8. Click the **Resume** button in the DAVE4 Debug perspective menu bar after the cursor runs to the ```main()``` breakpoint.
+
+    <img src="images/Lab2/dave4_debug_resume.png" alt="drawing" style="width:600px;"/>
+
+9. View the output in the IoT Console.
 
 ### Capture and Prepare to Display Analytics
 
