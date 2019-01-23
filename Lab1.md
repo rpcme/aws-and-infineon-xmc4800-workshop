@@ -344,7 +344,6 @@ In this step, you will setup a policy to grant appropriate permissions for your 
 Create the policy file on the device.  To keep the files organized, create this file in the ```credentials``` directory.
 
 ```shell
-cd
 vi ${THING_NAME}_policy.json
 ```
 
@@ -370,9 +369,9 @@ POLICY_NAME=${THING_NAME}_Policy
 Create the AWS IoT policy.
 
 ```bash
-aws iot create-policy                     \
-        --policy-name ${POLICY_NAME}      \
-        --policy-document file://${THING_NAME}_policy.json
+  aws iot create-policy                     \
+          --policy-name ${POLICY_NAME}      \
+          --policy-document file://${THING_NAME}_policy.json
 ```
 
 #### Associate the Thing and Policy to Certificate
