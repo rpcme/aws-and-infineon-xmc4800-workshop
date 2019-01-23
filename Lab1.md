@@ -241,7 +241,7 @@ You need to get AWS programmatic access credentials to configure the AWS CLI.
 5. Generate Access and Secret Key.
 6. Save the access and secret key locally.
 
-Now, enter ```aws configure``` once more.  Enter the Access Key, Secret Key, Region (us-east-1), and format (json) when prompted.
+Now, enter ```aws configure``` once more.  Enter the Access Key, Secret Key, Region (eu-west-1), and format (json) when prompted.
 
 ### Registering Your Device
 
@@ -289,8 +289,6 @@ In the previous section, you acquired the MAC Address of the device.  The Thing 
 
 In this step, you will create the certificates to authenticate your Thing with AWS IoT.  Although you can perform these steps using the AWS Console, customers will typically use the AWS CLI or API.
 
-You will need to retrieve the [Root CA Certificate](https://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem) from Symantec.
-
 *WARNING*: When creating a new certificate with AWS IoT, the generated Public and Private keys can only be retrieved directly after creation.
 
 When you authenticate with AWS IoT, the service receives the certificate and verifies that the certificate was signed with the private key to determine that the certificate is not falsified.
@@ -305,7 +303,6 @@ When you authenticate with AWS IoT, the service receives the certificate and ver
 
 
 Using the Terminal Window, change directory to the certificate and key working directory.
-
 
 ```bash
 cd ${LAB_REPOPATH}
@@ -323,18 +320,11 @@ Generate the client certificate and key.  This command is cross-platform.  The c
 >     --query certificateArn
 > ```
 
-Download the Root CA.
-
-```bash
-wget -O rootca.pem \
-     https://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem
-```
-
 At the top of the output, locate the =certificateArn= property. Copy the value, which has a pattern of ```arn:aws:iot:<region>:<accountId>:cert/<certificateId>```. You will use this value when you attach the Policy to the Certificate.  It will look similar to the following:
 
 ```json
 {
-    "certificateArn": "arn:aws:iot:us-east-1:012345678910:cert/8530c605d209a17917da34e5516c452a782e1dddb4dcdadc6d4fb742504d146b",
+    "certificateArn": "arn:aws:iot:eu-west-1:012345678910:cert/8530c605d209a17917da34e5516c452a782e1dddb4dcdadc6d4fb742504d146b",
 ...
 }
 ```
@@ -342,7 +332,7 @@ At the top of the output, locate the =certificateArn= property. Copy the value, 
 For ease of use later in this module, you may wish to set this to an environment variable:
 
 ```bash
-CERTIFICATE_ARN=arn:aws:iot:us-east-1:012345678910:cert/8530c605d209a17917da34e5516c452a782e1dddb4dcdadc6d4fb742504d146b
+CERTIFICATE_ARN=arn:aws:iot:eu-west-1:012345678910:cert/8530c605d209a17917da34e5516c452a782e1dddb4dcdadc6d4fb742504d146b
 ```
 
 #### Create the Gateway's Policy
