@@ -62,7 +62,7 @@ In this section, you will learn the physical directory layout for Amazon FreeRTO
 
 From your Home directory, check out the sources.
 
-1. Open a console window on your workstation to perform work on the command line.
+1. Open the **Git Bash** shell on your workstation to perform work on the command line.
 2. Clone the repository.  Make ```/c/src``` to ensure path lengths are short.
 ```
 mkdir /c/src
@@ -215,7 +215,7 @@ Install Python 2.7.
 
 Install the AWS CLI using ```pip```.
 
-```shell
+```bash
 pip install awscli
 ```
 
@@ -223,7 +223,7 @@ Configure your credentials.
 
 Run the following command to configure the AWS CLI.
 
-```shell
+```bash
 aws configure
 ```
 
@@ -261,7 +261,7 @@ In this step, you will create the Thing object - a representation of your device
 
 In the previous section, you acquired the MAC Address of the device.  The Thing Name will be the MAC Address, but the colons need to be removed.
 
-1. Open the Terminal or CMD window.
+1. Open the **Git Bash** shell.
 2. Set the variable for the Thing name.  Time to use the MAC address you got when checking the DAVE4 installation. If your MAC Address is ```98:84:e3:f6:04:11```, then your Thing Name will be ```9884e3f60411```.
 3. To create the virtual device, issue the following command from the  *terminal window*:
 
