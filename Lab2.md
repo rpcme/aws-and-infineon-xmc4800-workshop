@@ -2,7 +2,7 @@
 
 ## Lab 2: Run the Amazon FreeRTOS Sample Code
 
-In this lab, you will configure the Amazon FreeRTOS sample with your WiFi settings and the certificates and run the Hellow World Demo on the Infineon XMC4800 IoT Connectivity Kit.
+In this lab, you will configure the Amazon FreeRTOS demo program with your Wi-Fi settings and AWS IoT Core credentials. Then, you will run the Hello World Demo on the Infineon XMC4800 IoT Connectivity Kit.
 
 ### Configuring the Hello World Demo
 
@@ -13,24 +13,24 @@ In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include
    ```bash
    aws iot describe-endpoint
    ```
-   
+
    The output will be similar to the following.  **Use the output from the command on your workstation, not this value.  Endpoints can differ between AWS accounts.***
-   
+
    ```text
    audqth7zumq6e.iot.us-east-1.amazonaws.com
    ```
-   
+
    The result on line 38 will be similar to the following.
-   
+
    ```c
    static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "audqth7zumq6e.iot.us-east-1.amazonaws.com";
    ```
-   
+
 2. Edit the ```clientcredentialIOT_THING_NAME``` variable on line 43.  Although this value is used for the Device Shadow Client, we will edit it for completeness.  In the previous lab, you identified the MAC address for your device. For example, it may be similar to ```9884e3f60411```.  The value will then look similar to the following.
 
    ```c
    #define clientcredentialIOT_THING_NAME "9884e3f60411"
-   ``` 
+   ```
 3. Edit the ```clientcredentialWIFI_SSID``` variable on line 58.  For example, if your SSID is ``MySuperWiFi", then the value will look similar to the following.
 
    ```c
@@ -41,7 +41,7 @@ In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include
    ```c
    #define clientcredentialWIFI_PASSWORD   "p@s$woRd"
    ```
-   
+
 Next, we need to generate the header file that holds credentials for connecting to AWS IoT Core.  In DAVE4, open the file ```application_code``` > ```common_demos``` > ```include``` > ```aws_clientcredential_keys.h```.
 
 On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to ```$LAB_REPOPATH``` > amazon-freertos > tools > certificate_configuration.  Double-click ```CertificateConfigurator.html```.
@@ -64,7 +64,7 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 	 * "...base64 data..."
 	 * "-----END CERTIFICATE-----";
 	 */
-	static const char clientcredentialCLIENT_CERTIFICATE_PEM[] = 
+	static const char clientcredentialCLIENT_CERTIFICATE_PEM[] =
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIDWTCCAkGgAwIBAgIUBrxwa1bQrALUSLuVzFLgUNvLMuwwDQYJKoZIhvcNAQEL\n"
 	"BQAwTTFLMEkGA1UECwxCQW1hem9uIFdlYiBTZXJ2aWNlcyBPPUFtYXpvbi5jb20g\n"
@@ -73,7 +73,7 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 	"fPSkKCqOF+WztJd2N8SFUlkr1uvzJrcy0L0V6HNdYFGDfUzal/IcV6cNadIgWu6m\n"
 	"KSsrSqSGa+fxxyc/mCw83O5pm887dLVysnPB1EGTuGKLacP3QVJIrnJTasGb\n"
 	"-----END CERTIFICATE-----";
-	
+
 	/*
 	 * PEM-encoded client private key.
 	 *
@@ -100,7 +100,7 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 	"3qlix7Nks/N8+4XGXBod4fxRAhp9Eza/YjFlKhNqW1jzTi0p5g8iySbe6J7H1jPO\n"
 	"th5obcRvBds7fPzbkiApuT7zhUpskXuQLTpsBpLfhHSMnXQzOtxT\n"
 	"-----END RSA PRIVATE KEY-----";
-	
+
 	/*
 	 * PEM-encoded Just-in-Time Registration (JITR) certificate (optional).
 	 *
@@ -133,7 +133,7 @@ On your workstation, open Explorer (Windows) or Finder (Mac OSX) and navigate to
 8. The demo should now be running.  When completed, the output in the console will be similar to the following.
 
     <img src="images/Lab2/hello_world_demo_run.png" alt="drawing" style="width:900px;"/>
-    
+
 In the following sections, we will modify the sample program to do something a bit more interesting with it.
 
 ### Modifying the Client ID
@@ -152,9 +152,9 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 	    uint8_t buf[ wificonfigMAX_BSSID_LEN ];
 	    char cbuf[2];
 	    uint8_t idx = 0;
-	
+
 	    WIFI_GetMAC( ( uint8_t * )  buf);
-	    
+
 	    // get the mac address in a string
 	    for (idx = 0; idx < wificonfigMAX_BSSID_LEN; idx++)
 	    {
@@ -163,7 +163,7 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 	        {
 	            humanAddress[( idx * 2 )] = '0';
 	            humanAddress[( idx * 2 ) + 1] = cbuf[0];
-	
+
 	        }
 	        else
 	        {
@@ -171,11 +171,11 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 	            humanAddress[( idx * 2 ) + 1] = cbuf[1];
 	        }
 	    }
-	
+
 	    humanAddress[ ( wificonfigMAX_BSSID_LEN * 2 ) ] = '\0';
 	}
    ```
-2. On line 72, add the following include. 
+2. On line 72, add the following include.
 
    ```c
    #include "aws_wifi.h"
@@ -189,12 +189,13 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 4. Next, we need to initialize the value for ```thing_mac_address```.  We can do this in the entry function to this demo.  Scroll to line 512, and enter the line for assigning the value to ```thing_mac_address```.  Existing code has been added here for context.
 
    ```c
-   configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
+   void vStartMQTTEchoDemo( void )
+   {
+       configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
 
-   prvMacForHumans(thing_mac_address);
-
-   /* Create the message buffer used to pass strings from the MQTT callback
+       prvMacForHumans(thing_mac_address);
    ```
+
 5. Finally, we need to edit the Client ID for the MQTT client.  Scroll to line 187, to this function:
 
    ```c
@@ -219,7 +220,7 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 	    };
     ```
     To change the Client ID, we will change ```echoCLIENT_ID``` to ```thing_mac_address```.  It will look like the following:
-    
+
     ```c
         MQTTAgentConnectParams_t xConnectParameters =
 	    {
@@ -243,7 +244,7 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
    ```
 
    In the Terminal logging window, you will see the following:
-   
+
    ```c
 	3 177 [Tmr Svc] Wi-Fi module initialized (MAC Address: 84:f3:eb:a3:1a:7a).
 	4 177 [Tmr Svc] Connecting to AP...
@@ -253,19 +254,28 @@ In the Wi-Fi abstraction layer in Amazon FreeRTOS, there is an API to retrieve t
 	8 5136 [MQTTEcho] My Client ID is [84f3eba31a7a]
 	9 5136 [MQTTEcho] MQTT echo attempting to connect toa3vp4g8bw5u3sd.iot.us-east-1.amazonaws.com.
    ```
-   
+
    Next, we will learn how to integrate this demo with some of the on-board components.
 
 ### Making Local Actuation Happen
+
+> If you are running out of time, you can directly use ```aws_hello_world_lab2.c```. This has the code in this lab already implemented.  
+> 1. In DAVE, navigate to ```application_code``` > ```common_demos``` > ```source```.
+> 2. Right-click aws_hello_world.c, and choose **Properties**.
+> 3. Select **C/C++ Build**.
+> 4. Check **Exclude resource from build**.
+> 5. Click **OK**.
+> 6. Right-click aws_hello_world_lab2.c, and choose **Properties**.
+> 7. Uncheck **Exclude resource from build**.
+> 8. Click **OK**.
 
 The Infineon XMC4800 IoT Connectivity Kit is a feature-packed development board with a lot of options.  When you look at all the LEDs, buttons, and pins -- each of these are configurable in their own way through what is called Pin Multiplexing.
 
 Out of the box, the LEDs are disabled because GPIOs connected to them act as inputs by default. In this lab, we will configure the GPIOs connected to the LEDs as outputs.
 
-1. In DAVE4, open ```common_demos``` > ```source``` > ```aws_hello_world_lab2.c```.
-2. Add the inclusion of the LED library
+1. Add the inclusion of the LED library
    ```c
-   #include "Board_LED.h.h"
+   #include "Board_LED.h"
    ```
 
 2. Scroll to ```vStartMQTTEchoDemo()``` function. After the call to ```prvMacForHumans(thing_mac_address)``` add
@@ -273,7 +283,7 @@ Out of the box, the LEDs are disabled because GPIOs connected to them act as inp
    ```c
    LED_Initialize();
    ```
-   
+
 3. Next, we will turn on one of the LEDs in the publish function.  Find the function ```static void prvPublishNextMessage( BaseType_t xMessageNumber )```.  Add the following directly before the ```( void ) xReturned``` statement.
 
    ```c
@@ -282,7 +292,7 @@ Out of the box, the LEDs are disabled because GPIOs connected to them act as inp
    ```
 4. Next, we will add the opposite effect to the task performing the ACK publish.  The function name is ```static void prvMessageEchoingTask( void * pvParameters )```.  At the end of the block within the following ```if``` condition, place the alternating LED code.
 
-   ```
+   ```c
     if ( xBytesReceived <= ( sizeof( cDataBuffer ) - ( size_t ) echoACK_STRING_LENGTH ) )
     {
       ...
