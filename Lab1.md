@@ -1,6 +1,8 @@
 # Amazon FreeRTOS Workshop for the Infineon XMC4800 IoT Connectivity Kit
 ## Lab 1: Setup the Environment
 
+> **Before you begin**: The Infineon development environment DAVE is available on the Windows 10 operating system.  This workshop has been tested on the Windows 10 operating system.
+
 Lab 1 will organize the development environment prerequisites onto your workstation.  These tools are required to not only successfully complete the labs but set the foundation for developing solutions on AWS with the Infineon XMC4800 IoT Connectivity Kit.
 
 In this lab, you will accomplish the following:
@@ -33,8 +35,6 @@ For Windows specifically, the labs require [Git for Windows](https://gitforwindo
 
 When you install and setup Git, you will be able to clone repositories as well as perform ```diff``` and ```status``` operations in the local source tree that will help you understand what has changed in the source over time.
 
-On Mac OSX, Git is already installed on your system.
-
 On Windows, install [Git for Windows](https://gitforwindows.org/), which includes the MINGW shell environment that integrates nicely with the Windows environment. This will enable you to use Python 2.7 from the command line within a UNIX-like environment, which will simplify working through the labs.
 
 #### SEGGER J-Link Software and Documentation pack for Windows
@@ -55,7 +55,6 @@ Infineon DAVE4 is required to complete the labs.
    > **NOTE**: For Windows, a number of problems have been reported when people try to use Windows Explorer to unzip the zip file. Please use a third-party unzip program, such as 7-Zip
 
 4. To simplify starting DAVE4 in the future, create a shortcut on your desktop to the DAVE.exe file in the eclipse folder.
-
 
 ### Initializing the Repository
 
@@ -141,9 +140,10 @@ We will now try to run the unmodified ```aws_demos_apps``` project
 
 10. The demo should now be running.  When completed, the output in the console will be similar to the following.
 
+    > **Make a note of the MAC address for later usage**
+
     <img src="images/Lab1/dave4_debug_console_mac_address.png" alt="drawing" style="width:800px;"/>
 
->Make a note of the MAC address for later usage
 
 You will configure the project with your WiFi settings and the certificates to connect to AWS IoT Core in the next lab.
 
