@@ -63,8 +63,10 @@ In this section, you will learn the physical directory layout for Amazon FreeRTO
 From your Home directory, check out the sources.
 
 1. Open a console window on your workstation to perform work on the command line.
-2. Clone the repository.
+2. Clone the repository.  Make ```/c/src``` to ensure path lengths are short.
 ```
+mkdir /c/src
+cd /c/src
 git clone --recursive https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git
 ```
 3. In your HOME directory, you should now have directory ```aws-and-infineon-xmc4800-workshop```.
