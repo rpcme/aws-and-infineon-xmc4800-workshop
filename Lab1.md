@@ -322,7 +322,7 @@ Generate the client certificate and key.  This command is cross-platform.  The c
 >     --query certificateArn
 > ```
 
-At the top of the output, locate the =certificateArn= property. Copy the value, which has a pattern of ```arn:aws:iot:<region>:<accountId>:cert/<certificateId>```. You will use this value when you attach the Policy to the Certificate.  It will look similar to the following:
+At the top of the output, locate the ```certificateArn``` property. Copy the value, which has a pattern of ```arn:aws:iot:<region>:<accountId>:cert/<certificateId>```. You will use this value when you attach the Policy to the Certificate.  It will look similar to the following:
 
 ```json
 {
@@ -343,7 +343,7 @@ In this step, you will setup a policy to grant appropriate permissions for your 
 
 Create the policy file on the device.  To keep the files organized, create this file in the ```credentials``` directory.
 
-```shell
+```bash
 vi ${THING_NAME}_policy.json
 ```
 
