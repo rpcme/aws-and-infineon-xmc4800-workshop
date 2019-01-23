@@ -71,12 +71,10 @@ git clone --recursive https://github.com/rpcme/aws-and-infineon-xmc4800-workshop
 
 From this point onward, and throughout the remaining labs, the repository checkout directory is referred to as ```LAB_REPOPATH```.
 
-Alternatively, if you don't have git or you don't want to clone the repository (which is the best option, perform these steps:
-
-1. Navigate to https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git.
-2. Download the repository as ZIP.  Extract.  This will be known as ```LAB_REPOPATH```.
-3. Navigate to https://github.com/aws/amazon-freertos.
-4. Download the repository as ZIP.  Extract to ```LAB_REPOPATH/amazon-freertos```.  ```LAB_REPOPATH/amazon-freertos``` should have ```demos```, ```lib```, ```tests```, and ```tools``` directories.
+> Alternatively, if you don't have git or you don't want to clone the repository (which is the best option, perform these steps:
+>
+> 1. Navigate to https://github.com/rpcme/aws-and-infineon-xmc4800-workshop.git.
+> 2. Download the repository as ZIP.  Extract.  This will be known as ```LAB_REPOPATH```.
 
 We will now check the DAVE4 installation. For this purpose, we will import the Amazon FreeRTOS Hello World Demo that serves as the baseline for all workshop labs.
 
