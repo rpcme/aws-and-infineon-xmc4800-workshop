@@ -234,16 +234,21 @@ $ aws configure
 AWS Access Key ID [****************UDXA]:
 ```
 
-You need to get AWS programmatic access credentials to configure the AWS CLI.
+Otherwise you need to get AWS programmatic access credentials to configure the AWS CLI.
 
-1. Login to the AWS Console.
+1. Login to the [AWS Console](https://console.aws.amazon.com/console/home).
 2. Click Services > IAM.
 3. Click Users.
-4. Locate your user.
-5. Generate Access and Secret Key.
-6. Save the access and secret key locally.
+4. Click Add user and enter user name of your choice.
+5. Enable 'Programatic access' check box in Access type.
+6. Click Next:Permissions button. Click Attach existing policies directly.
+7. In the filter box enter iot.
+8. Enable 'AWSIoTConfigAccess'
+9. Click Next:Tags button.
+9. Click Next:Review and finally click Create user button.
+10. Download user security credentials file credentials.csv.
 
-Now, enter ```aws configure``` once more.  Enter the Access Key, Secret Key, Region (eu-west-1), and format (json) when prompted.
+Now, enter ```aws configure``` once more. Open credentials.csv file and copy the Access Key, Secret Key, Region (eu-west-1), and format (json) when prompted.
 
 ### Registering Your Device
 
@@ -344,7 +349,7 @@ In this step, you will setup a policy to grant appropriate permissions for your 
 Create the policy file on the device.  To keep the files organized, create this file in the ```credentials``` directory.
 
 ```bash
-vi ${THING_NAME}_policy.json
+cat >> ${THING_NAME}_policy.json << EOF
 ```
 
 Enter the following AWS IoT policy.  This policy allows the authenticated Thing to perform any action on any MQTT topic.  It is convenient for development, but not appropriate for when your devices go into production.
@@ -358,6 +363,7 @@ Enter the following AWS IoT policy.  This policy allows the authenticated Thing 
     "Resource": ["*"]
   }]
 }
+EOF
 ```
 
 Set the Policy name.
