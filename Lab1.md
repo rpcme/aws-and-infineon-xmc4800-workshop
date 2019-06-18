@@ -250,6 +250,8 @@ Otherwise you need to get AWS programmatic access credentials to configure the A
 
 Now, enter ```aws configure``` once more. Open credentials.csv file and copy the Access Key, Secret Key, Region (eu-west-1), and format (json) when prompted.
 
+> You can choose one of the available regions on the navigation bar of the [AWS Console](https://console.aws.amazon.com/console/home). For example if you choose ```Frankfurt``` as your region you will see that the URL changes to https://eu-central-1.console.aws.amazon.com/console/home?region=eu-central-1#. In this case the region to enter when asked by aws configure command would be ```eu-central-1```.
+
 ### Registering Your Device
 
 Throughout these Labs, the primary interface for working with the AWS Cloud is the command line.
